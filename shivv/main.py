@@ -10,7 +10,7 @@ from fruit_color import get_color, generate_mask, color_tag
 
 ########## INPUTS ###########
 IMG_PATH = os.path.join(os.getcwd(), "images", "raw", "1.jpeg") # Input image path
-CHART_PATH = os.path.join(os.getcwd(), "images", "charts", "okra-chart.csv")              # Json Path
+CHART_PATH = os.path.join(os.getcwd(), "images", "charts", "okra-chart.csv")               # Json Path
 
 ########## OUTPUTS ###########
 fruit_lengths = []
