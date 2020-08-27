@@ -1,18 +1,33 @@
 import cv2
+from matplotlib import pyplot as plt
 
-img = cv2.imread('/mnt/dash/Alpha_Share/Automation_Team/Tamil/NLP_learning/CHILI_LEARN/FMS_V0.1/tamil/1.jpeg')
 
-fromCenter = False
-ROIs = cv2.selectROIs('Select ROIs', img, fromCenter)
+def get_roi(img):
+    fromCenter = False
+    ROIs = cv2.selectROIs('Select ROIs', img, fromCenter)
+    list_of_rois = []
+    while True:
 
-ROI_1 = img[ROIs[0][1]:ROIs[0][1]+ROIs[0][3], ROIs[0][0]:ROIs[0][0]+ROIs[0][2]]
-ROI_2 = img[ROIs[1][1]:ROIs[1][1]+ROIs[1][3], ROIs[1][0]:ROIs[1][0]+ROIs[1][2]]
-ROI_3 = img[ROIs[2][1]:ROIs[2][1]+ROIs[2][3], ROIs[2][0]:ROIs[2][0]+ROIs[2][2]]
+        list_of_rois.append(ROIs)
+        if cv2.waitKey(0) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
 
-cv2.imshow('1', ROI_1)
-cv2.imshow('2', ROI_2)
-cv2.imshow('3', ROI_3)
+    list_of_coords = [i.tolist() for i in list_of_rois[0]]
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    coords = []
+    for i in list_of_coords:
+        temp = []
+        x, y, w, h = i
+        temp.append(x)
+        temp.append(y)
+        temp.append(x + w)
+        temp.append(y + h)
+        coords.append(temp)
 
+    return coords
+
+
+def draw_rois(hsv_show, list_off_cords):
+    for i in list_off_cords:
+        cv2.rectangle(hsv_show, (i[0], i[1]), (i[2], i[3]), color=(255, 0, 0), thickness=3)

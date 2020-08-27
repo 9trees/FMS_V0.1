@@ -1,12 +1,11 @@
 import cv2
 import utlis
 from matplotlib import pyplot as plt
-from skimage.io import imread
 
 
-def get_a4(path):
-    img = imread(path)
-    scale = 4
+
+def get_a4(img):
+    scale = 3
     wP = 210 *scale
     hP= 297 *scale
     imgContours, conts = utlis.getContours(img, minArea=50000, filter=4)
