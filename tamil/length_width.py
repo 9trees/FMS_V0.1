@@ -137,20 +137,28 @@ def animate(img, crop_img, length, width, color, coord):
     contour_bound = c.tolist()
     contour_bound = [i[0] for i in contour_bound]
     P = Polygon(contour_bound)
-    centre_point = list(P.centroid.coords)[0]
-    # h, w = 50 / 2, 50 / 2
-    # minx, miny = centre_point[0] - w, centre_point[1] - h
-    # maxx, maxy = centre_point[0] + w, centre_point[1] + h
+
+    # centre_point = tuple(c[c[:, :, 1].argmax()][0])
     #
-    # fontScale = (img.shape[0] * img.shape[1]) / (3000 * 3000)
-    # cv2.rectangle(img, (minx, miny), (maxx, maxy), (0, 0, 0), 2)
-    # # Number to object
-    # cv2.putText(img, str(i + 1), (int(roi[0] + roi[2] / 2), int(roi[1] + roi[3] / 2)), cv2.FONT_HERSHEY_DUPLEX,
-    #             2 * fontScale, text_color, 1)
-    # # Write the Color and length
-    # cv2.putText(img, str(length * 10) + " cm", (roi[0] + 1, roi[1] + roi[3] + int(50 * fontScale)),
-    #             cv2.FONT_HERSHEY_DUPLEX, fontScale, text_color, 1)
-    # cv2.putText(img, str(color), (roi[0], roi[1] + roi[3] + int(100 * fontScale)), cv2.FONT_HERSHEY_DUPLEX, fontScale,
-    #             text_color, 1)
-    # cv2.putText(img, "Hue : " + str(color_hsv[0][0][0]), (roi[0], roi[1] + roi[3] + int(150 * fontScale)),
-    #             cv2.FONT_HERSHEY_DUPLEX, fontScale, text_color, 1)
+    centre_point = list(P.centroid.coords)[0]
+    centre_point = (int(centre_point[0]), int(centre_point[1]))
+
+    fontscale = (img.shape[0] * img.shape[1]) / (3000 * 3000)
+    (text_width, text_height) = cv2.getTextSize('C : ' + color, cv2.FONT_HERSHEY_DUPLEX,
+                                                fontScale=6 * fontscale, thickness=1)[0]
+    text_color = (255, 255, 255)
+    box_color = (0, 0, 0)
+
+    h, w = text_height * 4, text_width
+    minx, miny = centre_point[0], centre_point[1]
+    maxx, maxy = centre_point[0] + w, centre_point[1] + h
+
+    # img = imread(img_path)
+    cv2.rectangle(img, (int(minx), int(miny)), (int(maxx), int(maxy)), box_color, cv2.FILLED)
+
+    cv2.putText(img, 'L : ' + str(length) + ' cm', (centre_point[0], centre_point[1] + text_height),
+                cv2.FONT_HERSHEY_DUPLEX, 5 * fontscale, text_color, 1)
+    cv2.putText(img, 'W : ' + str(width) + ' cm', (centre_point[0], centre_point[1] + int(text_height * 2.3)),
+                cv2.FONT_HERSHEY_DUPLEX, 5 * fontscale, text_color, 1)
+    cv2.putText(img, 'C : ' + color, (centre_point[0], centre_point[1] + int(text_height * 3.5)),
+                cv2.FONT_HERSHEY_DUPLEX, 6 * fontscale, text_color, 1)

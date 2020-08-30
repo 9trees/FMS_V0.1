@@ -19,43 +19,42 @@ hsv_img, hsv_values = hsv_slicer.hsv_slicer(sliced_doc)
 list_off_cords = get_roi.get_roi(hsv_img)
 hsv_img = cv2.cvtColor(hsv_img, cv2.COLOR_BGR2RGB)
 hsv_show = copy.copy(hsv_img)
-get_roi.draw_rois(hsv_img,list_off_cords)
-# plt.imshow(hsv_img)
-animate_img=copy.copy(sliced_doc)
+get_roi.draw_rois(hsv_img, list_off_cords)
+animate_img = copy.copy(sliced_doc)
 
-source_dict={}
+source_dict = {}
 img_name = Path(img_path).name.split('.')[0]
-source_dict.update({img_name:{}})
+source_dict.update({img_name: {}})
 
-count=1
+count = 1
 for coord in list_off_cords:
     crop_img = hsv_show[coord[1]:coord[3], coord[0]:coord[2]]
-    length = lw.get_length(crop_img,cm_to_pixel)
-    width = lw.get_width(crop_img,cm_to_pixel)
+    length = lw.get_length(crop_img, cm_to_pixel)
+    width = lw.get_width(crop_img, cm_to_pixel)
     color = gc.find_color(crop_img)
-    lw.animate(animate_img,crop_img,length,width,color,coord)
-    sample_id = 'Sample '+str(count)
-    source_dict[img_name].update({sample_id:{
-        'length':length,
+    lw.animate(animate_img, crop_img, length, width, color, coord)
+    sample_id = 'Sample ' + str(count)
+    source_dict[img_name].update({sample_id: {
+        'length': length,
         'width': width,
-        'color':color
+        'color': color
     }})
-    count+=1
-
+    count += 1
 
 plt.imshow(animate_img)
+cv2.imwrite('Animated_'+img_name+'.jpg',cv2.cvtColor(animate_img, cv2.COLOR_RGB2BGR))
 
-samples=[]
-colors=[]
-lengths=[]
-widths=[]
-for i,j in source_dict[img_name].items():
+samples = []
+colors = []
+lengths = []
+widths = []
+for i, j in source_dict[img_name].items():
     samples.append(i)
     colors.append(j['color'])
     lengths.append(j['length'])
     widths.append(j['width'])
 
-source_list = [samples,colors,lengths,widths]
+source_list = [samples, colors, lengths, widths]
 
 df = pd.DataFrame([source_list])
-df.to_csv(img_name+'.csv',index=False,header=False)
+df.to_csv(img_name + '.csv', index=False, header=False)
