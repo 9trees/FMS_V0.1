@@ -18,7 +18,7 @@ def hsv_slicer(img):
    cv2.createTrackbar("B2", "Chloropy",255,255,nothing)
 
 
-   rimg = cv2.resize(img, (0,0), fx=.5, fy=.5)
+   rimg = cv2.resize(img, (0,0), fx=1, fy=1)
 
 
 
@@ -45,4 +45,4 @@ def hsv_slicer(img):
          break
 
 
-   return val
+   return final,val

@@ -5,18 +5,6 @@ from shapely.geometry import LineString
 import math
 from shapely.geometry import Polygon
 import webcolors
-
-img_path = '/mnt/dash/Alpha_Share/Automation_Team/Tamil/NLP_learning/CHILI_LEARN/Okra/1.jpg'
-from skimage.io import imread
-
-img = imread(img_path)
-
-
-x1, y1 = 1935, 1606
-x2, y2 = 2396, 3460
-img = img[y1:y2, x1:x2]
-
-
 from sklearn.cluster import KMeans
 from collections import Counter
 import cv2  # for resizing image
@@ -53,7 +41,7 @@ def get_dominant_color(image, k=4, image_processing_size=None):
     label_counts = Counter(labels)
 
     # subset out most popular centroid
-    dominant_color = clt.cluster_centers_[label_counts.most_common(1)[0][0]]
+    dominant_color = clt.cluster_centers_[label_counts.most_common(2)[1][0]]
 
     return list(dominant_color)
 
@@ -77,8 +65,10 @@ def get_colour_name(requested_colour):
         actual_name = None
     return actual_name, closest_name
 
-out = get_dominant_color(img,image_processing_size=(500,500))
-# requested_colour = (43, 55, 24)
-actual_name, closest_name = get_colour_name(tuple(out))
-
-print ("Actual colour name:", actual_name, ", closest colour name:", closest_name)
+def find_color(img):
+    out = get_dominant_color(img,image_processing_size=(100,100))
+    actual_name, closest_name = get_colour_name(tuple(out))
+    if actual_name:
+        return actual_name
+    else:
+        return closest_name

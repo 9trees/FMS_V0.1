@@ -4,37 +4,14 @@ import matplotlib.pyplot as plt
 from shapely.geometry import LineString
 import math
 from shapely.geometry import Polygon
-
-img_path = '/mnt/dash/Alpha_Share/Automation_Team/Tamil/NLP_learning/CHILI_LEARN/Okra/1.jpg'
 from skimage.io import imread
 
-img = imread(img_path)
 
-
-# x1, y1 = 2616, 1265
-# x2, y2 = 2980, 1908
-# img = img[y1:y2, x1:x2]
-#
-# scale_len = 2403 - 534
-# cm_to_pixel = 15 / scale_len
-
-
-def hsv_slicing(img):
-    hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-    mask = cv2.inRange(hsv, (26, 52, 0), (65, 255, 255))
-    imask = mask > 0
-    green = np.zeros_like(img, np.uint8)
-    green[imask] = img[imask]
-    gray = cv2.cvtColor(green, cv2.COLOR_BGR2GRAY)
+def get_length(img, cm_to_pixel):
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     ret, threshold = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    return threshold
-
-
-def get_length(c, cm_to_pixel):
-    # contours, _ = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-    # c = max(contours, key=cv2.contourArea)
-    # arch_len = cv2.arcLength(c, True)
-
+    contours, _ = cv2.findContours(threshold, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+    c = max(contours, key=cv2.contourArea)
     contour_bound = c.tolist()
     contour_bound = [i[0] for i in contour_bound]
     top_most_point = min(c.tolist(), key=lambda x: x[0][1])[0]
@@ -61,9 +38,11 @@ def findIntersection(x1, y1, x2, y2, x3, y3, x4, y4):
     return [px, py]
 
 
-def get_width(c, cm_to_pixel):
-    # contours, _ = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-    # c = max(contours, key=cv2.contourArea)
+def get_width(img, cm_to_pixel):
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    ret, threshold = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    contours, _ = cv2.findContours(threshold, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+    c = max(contours, key=cv2.contourArea)
     contour_bound = c.tolist()
     contour_bound = [i[0] for i in contour_bound]
     top_most_point = min(c.tolist(), key=lambda x: x[0][1])[0]
@@ -146,107 +125,32 @@ def get_max_width(img, cm_to_pixel):
     return max_width
 
 
-# binery_thresh = hsv_slicing(img)
-# length = get_length(binery_thresh, cm_to_pixel)
-# width = get_width(binery_thresh, cm_to_pixel)
-# max_width = get_max_width(binery_thresh, cm_to_pixel)
-
-img_path = '/mnt/dash/Alpha_Share/Automation_Team/Tamil/NLP_learning/CHILI_LEARN/Okra/1.jpg'
-from skimage.io import imread
-
-img = imread(img_path)
-binery_thresh = hsv_slicing(img)
-kernel = np.ones((5, 5), np.uint8)
-dilation = cv2.dilate(binery_thresh, kernel, iterations=2)
-# plt.imshow(dilation)
-
-contours, _ = cv2.findContours(binery_thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-area = [cv2.contourArea(i) for i in contours]
-
-sliced_cnts = []
-for cnt in contours:
-    if 200000 < cv2.contourArea(cnt):
-        sliced_cnts.append(cnt)
-cm_to_pixel = 15.1/3048
-
-contour_dict = {}
-for i in sliced_cnts:
-    contour_bound = i.tolist()
+def animate(img, crop_img, length, width, color, coord):
+    gray = cv2.cvtColor(crop_img, cv2.COLOR_RGB2GRAY)
+    ret, threshold = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    contours, _ = cv2.findContours(threshold, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+    c = max(contours, key=cv2.contourArea)
+    for i in c:
+        i[0][0] = i[0][0] + coord[0]
+        i[0][1] = i[0][1] + coord[1]
+    cv2.drawContours(img, c, -1, (0, 0, 255), 3)
+    contour_bound = c.tolist()
     contour_bound = [i[0] for i in contour_bound]
     P = Polygon(contour_bound)
-    point = list(P.centroid.coords)[0]
-    length = get_length(i,cm_to_pixel)
-    # length =
-    # contour_dict.update({point: i})
-    contour_dict.update({point:{'bound':i,'length':length}})
-
-contour_dict = sorted(contour_dict.items(), key=lambda x: x[0][0])
-
-count = 1
-for i in contour_dict:
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    bottomLeftCornerOfText = (10, 500)
-    fontScale = 2
-    fontColor = (255, 255, 255)
-    text = str(count)+'- '+'length: '+str(i[1]['length'])
-
-    cv2.putText(img,text ,
-                (int(i[0][0]), int(i[0][1])),
-                font,
-                fontScale,
-                fontColor,10)
-    count += 1
-plt.imshow(img)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ===========================================================
-# x1, y1 = 1043, 270
-# x2, y2 = 1754, 920
-# crop_img = img[y1:y2, x1:x2]
-#
-#
-# scale_len = 2403 - 534
-# cm_to_pixel = 15 / scale_len
-#
-# hsv = cv2.cvtColor(crop_img, cv2.COLOR_RGB2HSV)
-# mask = cv2.inRange(hsv, (0, 0, 0), (255, 25, 147))
-# imask = mask > 0
-# green = np.zeros_like(crop_img, np.uint8)
-# green[imask] = crop_img[imask]
-# gray = cv2.cvtColor(green, cv2.COLOR_BGR2GRAY)
-# ret, threshold = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-# kernel = np.ones((5, 5), np.uint8)
-# dilation = cv2.dilate(threshold, kernel, iterations=3)
-# kernel1 = np.ones((10, 10), np.uint8)
-# erosion = cv2.erode(dilation,kernel1,iterations=2)
-# kernel = np.ones((10, 10), np.uint8)
-# dilation = cv2.dilate(erosion, kernel, iterations=3)
-# plt.imshow(dilation)
-# contours, _ = cv2.findContours(dilation, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-# c = max(contours, key=cv2.contourArea)
-# area_coin = cv2.contourArea(c)
-# coin_area_cm = 3.801
-# cm_to_pixel = coin_area_cm/area_coin
-#
-# cm_to_pixel = 15.1/3048
+    centre_point = list(P.centroid.coords)[0]
+    # h, w = 50 / 2, 50 / 2
+    # minx, miny = centre_point[0] - w, centre_point[1] - h
+    # maxx, maxy = centre_point[0] + w, centre_point[1] + h
+    #
+    # fontScale = (img.shape[0] * img.shape[1]) / (3000 * 3000)
+    # cv2.rectangle(img, (minx, miny), (maxx, maxy), (0, 0, 0), 2)
+    # # Number to object
+    # cv2.putText(img, str(i + 1), (int(roi[0] + roi[2] / 2), int(roi[1] + roi[3] / 2)), cv2.FONT_HERSHEY_DUPLEX,
+    #             2 * fontScale, text_color, 1)
+    # # Write the Color and length
+    # cv2.putText(img, str(length * 10) + " cm", (roi[0] + 1, roi[1] + roi[3] + int(50 * fontScale)),
+    #             cv2.FONT_HERSHEY_DUPLEX, fontScale, text_color, 1)
+    # cv2.putText(img, str(color), (roi[0], roi[1] + roi[3] + int(100 * fontScale)), cv2.FONT_HERSHEY_DUPLEX, fontScale,
+    #             text_color, 1)
+    # cv2.putText(img, "Hue : " + str(color_hsv[0][0][0]), (roi[0], roi[1] + roi[3] + int(150 * fontScale)),
+    #             cv2.FONT_HERSHEY_DUPLEX, fontScale, text_color, 1)
