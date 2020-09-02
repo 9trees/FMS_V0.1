@@ -10,7 +10,7 @@ import Get_the_color as gc
 from pathlib import Path
 import pandas as pd
 
-img_path = '/mnt/dash/Alpha_Share/Automation_Team/Tamil/NLP_learning/CHILI_LEARN/FMS_V0.1/tamil/1.jpeg'
+img_path = '/mnt/dash/Alpha_Share/Automation_Team/Tamil/NLP_learning/CHILI_LEARN/2020-08-20-Okra-fruit/IMG_8733.JPG'
 
 img = imread(img_path)
 sliced_doc = detect_paper.get_a4(img)
@@ -32,8 +32,8 @@ for coord in list_off_cords:
     length = lw.get_length(crop_img, cm_to_pixel)
     width = lw.get_width(crop_img, cm_to_pixel)
     color = gc.find_color(crop_img)
-    lw.animate(animate_img, crop_img, length, width, color, coord)
-    sample_id = 'Sample ' + str(count)
+    lw.animate(animate_img, crop_img, length, width, color,count, coord)
+    sample_id = str(count)
     source_dict[img_name].update({sample_id: {
         'length': length,
         'width': width,

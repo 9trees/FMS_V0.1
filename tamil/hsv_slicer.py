@@ -11,7 +11,7 @@ def hsv_slicer(img):
 
 
    cv2.createTrackbar("R1", "Chloropy",0,255,nothing)
-   cv2.createTrackbar("G1", "Chloropy",0,255,nothing)
+   cv2.createTrackbar("G1", "Chloropy",60,255,nothing)
    cv2.createTrackbar("B1", "Chloropy",0,255,nothing)
    cv2.createTrackbar("R2", "Chloropy",255,255,nothing)
    cv2.createTrackbar("G2", "Chloropy",255,255,nothing)

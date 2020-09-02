@@ -125,7 +125,7 @@ def get_max_width(img, cm_to_pixel):
     return max_width
 
 
-def animate(img, crop_img, length, width, color, coord):
+def animate(img, crop_img, length, width, color, sample, coord):
     gray = cv2.cvtColor(crop_img, cv2.COLOR_RGB2GRAY)
     ret, threshold = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     contours, _ = cv2.findContours(threshold, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
@@ -144,21 +144,26 @@ def animate(img, crop_img, length, width, color, coord):
     centre_point = (int(centre_point[0]), int(centre_point[1]))
 
     fontscale = (img.shape[0] * img.shape[1]) / (3000 * 3000)
-    (text_width, text_height) = cv2.getTextSize('C : ' + color, cv2.FONT_HERSHEY_DUPLEX,
+    # (text_width, text_height) = cv2.getTextSize('C : ' + color, cv2.FONT_HERSHEY_DUPLEX,
+    #                                             fontScale=6 * fontscale, thickness=1)[0]
+    (text_width, text_height) = cv2.getTextSize(str(sample), cv2.FONT_HERSHEY_DUPLEX,
                                                 fontScale=6 * fontscale, thickness=1)[0]
+
     text_color = (255, 255, 255)
     box_color = (0, 0, 0)
 
-    h, w = text_height * 4, text_width
+    h, w = text_height, text_width
     minx, miny = centre_point[0], centre_point[1]
     maxx, maxy = centre_point[0] + w, centre_point[1] + h
 
     # img = imread(img_path)
     cv2.rectangle(img, (int(minx), int(miny)), (int(maxx), int(maxy)), box_color, cv2.FILLED)
 
-    cv2.putText(img, 'L : ' + str(length) + ' cm', (centre_point[0], centre_point[1] + text_height),
-                cv2.FONT_HERSHEY_DUPLEX, 5 * fontscale, text_color, 1)
-    cv2.putText(img, 'W : ' + str(width) + ' cm', (centre_point[0], centre_point[1] + int(text_height * 2.3)),
-                cv2.FONT_HERSHEY_DUPLEX, 5 * fontscale, text_color, 1)
-    cv2.putText(img, 'C : ' + color, (centre_point[0], centre_point[1] + int(text_height * 3.5)),
+    cv2.putText(img, str(sample), (centre_point[0], centre_point[1] + text_height),
                 cv2.FONT_HERSHEY_DUPLEX, 6 * fontscale, text_color, 1)
+    # cv2.putText(img, 'C : ' + color, (centre_point[0], centre_point[1] + int(text_height *  2.3 )),
+    #             cv2.FONT_HERSHEY_DUPLEX, 6 * fontscale, text_color, 1)
+    # cv2.putText(img, 'D : ' + str(width) + ' cm', (centre_point[0], centre_point[1] + int(text_height * 3.5)),
+    #             cv2.FONT_HERSHEY_DUPLEX, 5 * fontscale, text_color, 1)
+    # cv2.putText(img, 'L : ' + str(length) + ' cm', (centre_point[0], centre_point[1] +int(text_height * 4.6)),
+    #             cv2.FONT_HERSHEY_DUPLEX, 5 * fontscale, text_color, 1)
