@@ -55,6 +55,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.startImage.clicked.connect(self.change_image)
+        self.imgs_list.itemClicked.connect(self.list_clicked)
         self.HSV.stateChanged.connect(self.update_setting)
         self.H1.valueChanged.connect(self.update_setting)
         self.H2.valueChanged.connect(self.update_setting)
@@ -79,12 +80,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.close()
 
     def change_image(self):
-        global image_f, running
+        # global image_f, running
         file_name = easygui.diropenbox()
         self.startImage.setText(file_name)
         # image_f = cv2.imread(file_name)
         self.list_paths(file_name)
-        running = True
+        # running = True
 
     def update_setting(self):
         global running
@@ -93,33 +94,33 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def update_frame(self):
         global running, image, dft, img
         if running:
-            # img = image_f.copy()
-            # img_height, img_width, img_colors = img.shape
-            # scale_w = float(self.window_width) / float(img_width)
-            # scale_h = float(self.window_height) / float(img_height)
-            # scale = min([scale_w, scale_h])
-            #
-            # if scale == 0:
-            #     scale = 1
-            #
-            # img = cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-            # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            # height, width, bpc = img.shape
-            # bpl = bpc * width
-            #
-            # if self.HSV.isChecked():
-            #     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            #     mask = cv2.inRange(hsv, (self.H1.value(), self.S1.value(), self.V1.value()),
-            #                        (self.H2.value(), self.S2.value(), self.V2.value()))
-            #
-            #     imask = mask > 0
-            #     green = np.zeros_like(img, np.uint8)
-            #     green[imask] = img[imask]
-            #     img = green
-            #
-            # image = QtGui.QImage(img.data, width, height, bpl, QtGui.QImage.Format_RGB888)
-            #
-            # self.ImgWidget.setImage(image)
+            img = image_f.copy()
+            img_height, img_width, img_colors = img.shape
+            scale_w = float(self.window_width) / float(img_width)
+            scale_h = float(self.window_height) / float(img_height)
+            scale = min([scale_w, scale_h])
+
+            if scale == 0:
+                scale = 1
+
+            img = cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            height, width, bpc = img.shape
+            bpl = bpc * width
+
+            if self.HSV.isChecked():
+                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                mask = cv2.inRange(hsv, (self.H1.value(), self.S1.value(), self.V1.value()),
+                                   (self.H2.value(), self.S2.value(), self.V2.value()))
+
+                imask = mask > 0
+                green = np.zeros_like(img, np.uint8)
+                green[imask] = img[imask]
+                img = green
+
+            image = QtGui.QImage(img.data, width, height, bpl, QtGui.QImage.Format_RGB888)
+
+            self.ImgWidget.setImage(image)
             running = False
 
     def save_image(self):
@@ -138,9 +139,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # self.itemClicked.connect(self.list_clicked)
 
-    # def list_clicked(self, item):
-    #     QMessageBox.information(self, "ListWidget", "You clicked: " + item.text())
-
+    def list_clicked(self, item):
+        global image_f, running
+        image_f = cv2.imread(item.text())
+        running = True
 
 app = QtWidgets.QApplication(sys.argv)
 w = MyWindowClass(None)
