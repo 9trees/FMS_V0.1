@@ -9,6 +9,8 @@ import easygui
 import os
 from matplotlib import pyplot as plt
 import glob
+import detect_paper
+from skimage.io import imread
 
 running = False
 capture_thread = None
@@ -75,7 +77,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.close_button.clicked.connect(self.close_window)
         self.save.clicked.connect(self.save_image)
 
-
     def close_window(self):
         self.close()
 
@@ -104,12 +105,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 scale = 1
 
             img = cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             height, width, bpc = img.shape
             bpl = bpc * width
 
             if self.HSV.isChecked():
-                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
                 mask = cv2.inRange(hsv, (self.H1.value(), self.S1.value(), self.V1.value()),
                                    (self.H2.value(), self.S2.value(), self.V2.value()))
 
@@ -132,17 +132,24 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         global running
         running = False
 
-    def list_paths(self,file_name):
-        image_paths = glob.glob(file_name + '/*.JPG') + glob.glob(file_name + '/*.png')
+    def list_paths(self, file_name):
+        image_paths = glob.glob(file_name + '/*.JPG') + glob.glob(file_name + '/*.png') + glob.glob(
+            file_name + '/*.jpg') + glob.glob(file_name + '/*.jpeg')
         for i in image_paths:
             self.imgs_list.addItem(i)
 
         # self.itemClicked.connect(self.list_clicked)
 
     def list_clicked(self, item):
-        global image_f, running
-        image_f = cv2.imread(item.text())
+        global image_f, running ,cm_to_pixel
+        current_img = item.text()
+        image = imread(current_img)
+        image_f = detect_paper.get_a4(image)
+        cm_to_pixel = detect_paper.get_cm_per_pixel(image_f)
+        # image_f = cv2.imread(item.text())
+        self.imgs_list_2.addItem(current_img)
         running = True
+
 
 app = QtWidgets.QApplication(sys.argv)
 w = MyWindowClass(None)
