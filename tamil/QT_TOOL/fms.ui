@@ -394,7 +394,7 @@
     <property name="geometry">
      <rect>
       <x>850</x>
-      <y>50</y>
+      <y>30</y>
       <width>311</width>
       <height>181</height>
      </rect>
@@ -404,7 +404,7 @@
     <property name="geometry">
      <rect>
       <x>850</x>
-      <y>290</y>
+      <y>260</y>
       <width>311</width>
       <height>181</height>
      </rect>
@@ -414,7 +414,7 @@
     <property name="geometry">
      <rect>
       <x>850</x>
-      <y>30</y>
+      <y>10</y>
       <width>191</width>
       <height>20</height>
      </rect>
@@ -427,7 +427,7 @@
     <property name="geometry">
      <rect>
       <x>850</x>
-      <y>260</y>
+      <y>230</y>
       <width>191</width>
       <height>20</height>
      </rect>
@@ -439,8 +439,8 @@
    <widget class="QPushButton" name="save">
     <property name="geometry">
      <rect>
-      <x>980</x>
-      <y>530</y>
+      <x>1020</x>
+      <y>570</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -455,8 +455,8 @@
    <widget class="QPushButton" name="close_button">
     <property name="geometry">
      <rect>
-      <x>980</x>
-      <y>570</y>
+      <x>1020</x>
+      <y>610</y>
       <width>97</width>
       <height>27</height>
      </rect>
@@ -521,7 +521,7 @@ color: rgb(255, 255, 255);</string>
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QCheckBox" name="HSV_2">
+   <widget class="QCheckBox" name="select_roi">
     <property name="geometry">
      <rect>
       <x>600</x>
@@ -540,7 +540,7 @@ color: rgb(255, 255, 255);</string>
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="save_2">
+   <widget class="QPushButton" name="process_roi">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -554,6 +554,45 @@ color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string>Process the ROIs</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="imgs_list_3">
+    <property name="geometry">
+     <rect>
+      <x>850</x>
+      <y>500</y>
+      <width>311</width>
+      <height>51</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>850</x>
+      <y>470</y>
+      <width>191</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Console Output</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="clr_consle">
+    <property name="geometry">
+     <rect>
+      <x>1050</x>
+      <y>470</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>Clear Console</string>
     </property>
    </widget>
   </widget>

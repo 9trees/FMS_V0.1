@@ -133,6 +133,7 @@ def animate(img, crop_img, length, width, color, sample, coord):
     for i in c:
         i[0][0] = i[0][0] + coord[0]
         i[0][1] = i[0][1] + coord[1]
+
     cv2.drawContours(img, c, -1, (0, 0, 255), 3)
     contour_bound = c.tolist()
     contour_bound = [i[0] for i in contour_bound]
