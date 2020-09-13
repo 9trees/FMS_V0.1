@@ -436,27 +436,11 @@
      <string>Completed</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="save">
-    <property name="geometry">
-     <rect>
-      <x>1020</x>
-      <y>570</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>Save Image</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="close_button">
     <property name="geometry">
      <rect>
-      <x>1020</x>
-      <y>610</y>
+      <x>1000</x>
+      <y>570</y>
       <width>97</width>
       <height>27</height>
      </rect>

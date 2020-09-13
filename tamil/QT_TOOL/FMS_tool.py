@@ -95,7 +95,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(1)
         self.close_button.clicked.connect(self.close_window)
-        self.save.clicked.connect(self.save_image)
         self.process_roi.clicked.connect(self.find_len)
         self.clr_consle.clicked.connect(self.console_clear)
 
@@ -103,22 +102,32 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.close()
 
     def change_image(self):
-        # global image_f, running
+        global file_name
         file_name = easygui.diropenbox()
         self.startImage.setText(file_name)
-        # image_f = cv2.imread(file_name)
         self.list_paths(file_name)
-        # running = True
+        # folder_name = Path(file_name).name
+        # parent_name = str(Path(file_name).parent)
+        if not os.path.exists(file_name + '/' + 'Animated_Images'):
+            os.mkdir(file_name + '/' + 'Animated_Images')
+
+        if not os.path.exists(file_name + '/' + 'CSV'):
+            os.mkdir(file_name + '/' + 'CSV')
+
+        if not os.path.exists(file_name + '/' + 'XML'):
+            os.mkdir(file_name + '/' + 'XML')
 
     def update_setting(self):
         global running
         running = True
 
     def update_frame(self):
-        global running, dft
+        global running, dft, animate
         if running:
             if not self.select_roi.isChecked():
                 img = image_f.copy()
+            elif animate:
+                img = animate_img
             else:
                 img = box_draw
 
@@ -149,11 +158,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.ImgWidget.setImage(image)
             running = False
 
-    def save_image(self):
-        global running
-        cv2.imwrite('hj.jpg', img)
-        running = True
-
     def closeEvent(self, event):
         global running
         running = False
@@ -164,26 +168,23 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         for i in image_paths:
             self.imgs_list.addItem(i)
 
-
         # self.itemClicked.connect(self.list_clicked)
 
     def console_clear(self):
         self.imgs_list_3.clear()
 
     def list_clicked(self, item):
-        global image_f, running, cm_to_pixel,current_img,animate_img
+        global image_f, running, cm_to_pixel, current_img, animate_img, animate
+        animate = False
         current_img = item.text()
         image = imread(current_img)
         image_f = detect_paper.get_a4(image)
         animate_img = copy.copy(image_f)
         cm_to_pixel = detect_paper.get_cm_per_pixel(image_f)
-        # image_f = cv2.imread(item.text())
-
-        self.imgs_list_2.addItem(current_img)
         running = True
 
     def draw_roi(self):
-        global list_off_cords, box_draw, running , green
+        global list_off_cords, box_draw, running, green
         hsv = cv2.cvtColor(image_f, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(hsv, (self.H1.value(), self.S1.value(), self.V1.value()),
                            (self.H2.value(), self.S2.value(), self.V2.value()))
@@ -195,11 +196,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         list_off_cords = get_roi.get_roi(cv2.cvtColor(green, cv2.COLOR_RGB2BGR))
         box_draw = copy.copy(green)
         get_roi.draw_rois(box_draw, list_off_cords)
-        # image = QtGui.QImage(img.data, width, height, bpl, QtGui.QImage.Format_RGB888)
-        # self.ImgWidget.setImage(image)
         running = True
 
     def find_len(self):
+        global animate, running
 
         source_dict = {}
         img_name = Path(current_img).name.split('.')[0]
@@ -219,10 +219,29 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 'color': color
             }})
             count += 1
+        animate = True
+        running = True
+
+        samples = []
+        colors = []
+        lengths = []
+        widths = []
+        for i, j in source_dict[img_name].items():
+            samples.append(i)
+            colors.append(j['color'])
+            lengths.append(j['length'])
+            widths.append(j['width'])
+
+        source_list = [samples, colors, lengths, widths]
+
+        df = pd.DataFrame([source_list])
+        df.to_csv(file_name + '/' + 'CSV' + '/' + img_name + '.csv', index=False, header=False)
 
         self.imgs_list_3.addItem('Animated successfully')
-        # plt.imshow(animate_img)
-        cv2.imwrite('Animated_' + img_name + '.jpg', cv2.cvtColor(animate_img, cv2.COLOR_RGB2BGR))
+        self.imgs_list_2.addItem(current_img)
+        cv2.imwrite(file_name + '/' + 'Animated_Images' + '/' + img_name + '.jpg',
+                    cv2.cvtColor(animate_img, cv2.COLOR_RGB2BGR))
+
 
 app = QtWidgets.QApplication(sys.argv)
 w = MyWindowClass(None)
