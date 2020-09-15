@@ -592,6 +592,19 @@ color: rgb(255, 255, 255);</string>
      <string>Select/Redo ROIs</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="labels_box">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>580</y>
+      <width>191</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>-1</number>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_image">

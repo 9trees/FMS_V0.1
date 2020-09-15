@@ -101,6 +101,14 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.clr_consle.clicked.connect(self.console_clear)
         self.save_annotation_bt.clicked.connect(self.save_json)
 
+        # initiating the labels from the .txt file
+        with open('lables.txt', encoding='utf-8') as f:
+            labels = f.read()
+        labels = labels.split('\n')[:-1]
+        for i in labels:
+            self.labels_box.addItem(i)
+
+
     def close_window(self):
         self.close()
 
@@ -188,12 +196,13 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         img_name = Path(current_img).name.split('.')[0]
         image = imread(current_img)
         image_f = detect_paper.get_a4(image)
+        if image_f is None:
+            self.imgs_list_3.addItem(img_name_ext + ': !!!Unable to Detect A4!!!')
         animate_img = copy.copy(image_f)
         cm_to_pixel = detect_paper.get_cm_per_pixel(image_f)
         self.imgs_list_3.addItem(img_name_ext + ':Read successfully')
         running = True
-        # all_items = self.imgs_list.findItems(current_img, QtCore.Qt.MatchRegExp)
-        # print(all_items)
+
 
     def draw_roi(self):
         global list_off_cords, box_draw, running, green,rois
@@ -261,7 +270,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         img_path = file_name + '/' + 'annotation' + '/' + img_name + '.jpg'
         cv2.imwrite(img_path, cv2.cvtColor(image_f, cv2.COLOR_RGB2BGR))
-        data_annotation.save_annotation(contours, 'g', image_f, img_path, img_name,
+        data_annotation.save_annotation(contours, self.labels_box.currentText(), image_f, img_path, img_name,
                                         file_name + '/' + 'annotation' + '/' + img_name + '.json')
 
         self.imgs_list_3.addItem(img_name_ext + ':Annotation Saved')
