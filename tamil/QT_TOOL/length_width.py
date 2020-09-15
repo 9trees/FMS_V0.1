@@ -23,7 +23,7 @@ def get_length(img, cm_to_pixel):
 
     # veggi_len = arch_len / 2
     veggi_len = round(distance * cm_to_pixel, 2)
-    return veggi_len,c
+    return veggi_len
 
 
 def midpoint(p1, p2):
@@ -63,7 +63,7 @@ def get_width(img, cm_to_pixel):
             intersection_points.append(point)
 
     p1 = intersection_points[0]
-    p2 = intersection_points[1]
+    p2 = intersection_points[-1]
 
     distance = math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2))
     distance = round(distance * cm_to_pixel, 2)
@@ -169,3 +169,4 @@ def animate(img, crop_img, length, width, color, sample, coord):
     #             cv2.FONT_HERSHEY_DUPLEX, 5 * fontscale, text_color, 1)
     # cv2.putText(img, 'L : ' + str(length) + ' cm', (centre_point[0], centre_point[1] +int(text_height * 4.6)),
     #             cv2.FONT_HERSHEY_DUPLEX, 5 * fontscale, text_color, 1)
+    return c

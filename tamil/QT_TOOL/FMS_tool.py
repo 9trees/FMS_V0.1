@@ -222,11 +222,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         count = 1
         for coord in list_off_cords:
             crop_img = green[coord[1]:coord[3], coord[0]:coord[2]]
-            length, cnt = lw.get_length(crop_img, cm_to_pixel)
-            contours.append(cnt)
+            length = lw.get_length(crop_img, cm_to_pixel)
             width = lw.get_width(crop_img, cm_to_pixel)
             color = gc.find_color(crop_img)
-            lw.animate(animate_img, crop_img, length, width, color, count, coord)
+            cnt = lw.animate(animate_img, crop_img, length, width, color, count, coord)
+            contours.append(cnt)
             sample_id = str(count)
             source_dict[img_name].update({sample_id: {
                 'length': length,
