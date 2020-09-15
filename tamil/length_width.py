@@ -23,7 +23,7 @@ def get_length(img, cm_to_pixel):
 
     # veggi_len = arch_len / 2
     veggi_len = round(distance * cm_to_pixel, 2)
-    return veggi_len
+    return veggi_len,c
 
 
 def midpoint(p1, p2):

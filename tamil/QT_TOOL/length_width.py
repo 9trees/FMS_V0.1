@@ -23,7 +23,7 @@ def get_length(img, cm_to_pixel):
 
     # veggi_len = arch_len / 2
     veggi_len = round(distance * cm_to_pixel, 2)
-    return veggi_len
+    return veggi_len,c
 
 
 def midpoint(p1, p2):
@@ -39,6 +39,7 @@ def findIntersection(x1, y1, x2, y2, x3, y3, x4, y4):
 
 
 def get_width(img, cm_to_pixel):
+    h,w,_ = img.shape
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     ret, threshold = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     contours, _ = cv2.findContours(threshold, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
@@ -54,7 +55,7 @@ def get_width(img, cm_to_pixel):
         x1 = contour_bound[i]
         x2 = contour_bound[i + 1]
         x3 = [0, mid_contour[1]]
-        x4 = [mid_contour[0] * 5, mid_contour[0]]
+        x4 = [w, mid_contour[0]]
         line = LineString([x1, x2])
         other = LineString([x3, x4])
         if line.intersects(other):

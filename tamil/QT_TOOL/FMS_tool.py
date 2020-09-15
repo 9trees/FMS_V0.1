@@ -23,6 +23,8 @@ import length_width as lw
 import Get_the_color as gc
 from pathlib import Path
 import pandas as pd
+import data_annotation
+import PyQt5
 
 running = False
 capture_thread = None
@@ -84,7 +86,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.S2.valueChanged.connect(self.update_setting)
         self.V1.valueChanged.connect(self.update_setting)
         self.V2.valueChanged.connect(self.update_setting)
-        self.select_roi.stateChanged.connect(self.draw_roi)
+        self.select_roi.clicked.connect(self.draw_roi)
 
         self.window_width = self.ImgWidget.frameSize().width()
         self.window_height = self.ImgWidget.frameSize().height()
@@ -97,6 +99,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.close_button.clicked.connect(self.close_window)
         self.process_roi.clicked.connect(self.find_len)
         self.clr_consle.clicked.connect(self.console_clear)
+        self.save_annotation_bt.clicked.connect(self.save_json)
 
     def close_window(self):
         self.close()
@@ -114,22 +117,24 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         if not os.path.exists(file_name + '/' + 'CSV'):
             os.mkdir(file_name + '/' + 'CSV')
 
-        if not os.path.exists(file_name + '/' + 'XML'):
-            os.mkdir(file_name + '/' + 'XML')
+        if not os.path.exists(file_name + '/' + 'annotation'):
+            os.mkdir(file_name + '/' + 'annotation')
 
     def update_setting(self):
         global running
         running = True
 
     def update_frame(self):
-        global running, dft, animate
+        global running, dft, animate,rois
         if running:
-            if not self.select_roi.isChecked():
-                img = image_f.copy()
+            if rois:
+                img = box_draw
+                rois = False
             elif animate:
                 img = animate_img
+                animate = False
             else:
-                img = box_draw
+                img = image_f.copy()
 
             img_height, img_width, img_colors = img.shape
             scale_w = float(self.window_width) / float(img_width)
@@ -174,17 +179,24 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.imgs_list_3.clear()
 
     def list_clicked(self, item):
-        global image_f, running, cm_to_pixel, current_img, animate_img, animate
+        global image_f, running, cm_to_pixel, current_img, animate_img, animate, img_name, img_name_ext, current_index,rois
         animate = False
+        rois = False
         current_img = item.text()
+        current_index = self.imgs_list.indexFromItem(item).row()
+        img_name_ext = Path(current_img).name
+        img_name = Path(current_img).name.split('.')[0]
         image = imread(current_img)
         image_f = detect_paper.get_a4(image)
         animate_img = copy.copy(image_f)
         cm_to_pixel = detect_paper.get_cm_per_pixel(image_f)
+        self.imgs_list_3.addItem(img_name_ext + ':Read successfully')
         running = True
+        # all_items = self.imgs_list.findItems(current_img, QtCore.Qt.MatchRegExp)
+        # print(all_items)
 
     def draw_roi(self):
-        global list_off_cords, box_draw, running, green
+        global list_off_cords, box_draw, running, green,rois
         hsv = cv2.cvtColor(image_f, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(hsv, (self.H1.value(), self.S1.value(), self.V1.value()),
                            (self.H2.value(), self.S2.value(), self.V2.value()))
@@ -196,19 +208,22 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         list_off_cords = get_roi.get_roi(cv2.cvtColor(green, cv2.COLOR_RGB2BGR))
         box_draw = copy.copy(green)
         get_roi.draw_rois(box_draw, list_off_cords)
+        self.imgs_list_3.addItem(img_name_ext + ':ROI Drawn')
+        rois = True
         running = True
 
     def find_len(self):
-        global animate, running
+        global animate, running, contours
 
         source_dict = {}
-        img_name = Path(current_img).name.split('.')[0]
         source_dict.update({img_name: {}})
 
+        contours = []
         count = 1
         for coord in list_off_cords:
             crop_img = green[coord[1]:coord[3], coord[0]:coord[2]]
-            length = lw.get_length(crop_img, cm_to_pixel)
+            length, cnt = lw.get_length(crop_img, cm_to_pixel)
+            contours.append(cnt)
             width = lw.get_width(crop_img, cm_to_pixel)
             color = gc.find_color(crop_img)
             lw.animate(animate_img, crop_img, length, width, color, count, coord)
@@ -237,10 +252,22 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         df = pd.DataFrame([source_list])
         df.to_csv(file_name + '/' + 'CSV' + '/' + img_name + '.csv', index=False, header=False)
 
-        self.imgs_list_3.addItem('Animated successfully')
-        self.imgs_list_2.addItem(current_img)
+        self.imgs_list_3.addItem(img_name_ext + ':Animated successfully')
+
         cv2.imwrite(file_name + '/' + 'Animated_Images' + '/' + img_name + '.jpg',
                     cv2.cvtColor(animate_img, cv2.COLOR_RGB2BGR))
+
+    def save_json(self):
+
+        img_path = file_name + '/' + 'annotation' + '/' + img_name + '.jpg'
+        cv2.imwrite(img_path, cv2.cvtColor(image_f, cv2.COLOR_RGB2BGR))
+        data_annotation.save_annotation(contours, 'g', image_f, img_path, img_name,
+                                        file_name + '/' + 'annotation' + '/' + img_name + '.json')
+
+        self.imgs_list_3.addItem(img_name_ext + ':Annotation Saved')
+        self.imgs_list_2.addItem(current_img)
+        self.imgs_list.takeItem(current_index)
+
 
 
 app = QtWidgets.QApplication(sys.argv)

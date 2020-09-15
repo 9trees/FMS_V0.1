@@ -26,10 +26,12 @@ source_dict = {}
 img_name = Path(img_path).name.split('.')[0]
 source_dict.update({img_name: {}})
 
+contours =[]
 count = 1
 for coord in list_off_cords:
     crop_img = hsv_show[coord[1]:coord[3], coord[0]:coord[2]]
-    length = lw.get_length(crop_img, cm_to_pixel)
+    length ,cnt= lw.get_length(crop_img, cm_to_pixel)
+    contours.append(cnt)
     width = lw.get_width(crop_img, cm_to_pixel)
     color = gc.find_color(crop_img)
     lw.animate(animate_img, crop_img, length, width, color,count, coord)
@@ -41,8 +43,11 @@ for coord in list_off_cords:
     }})
     count += 1
 
-plt.imshow(animate_img)
-cv2.imwrite('Animated_'+img_name+'.jpg',cv2.cvtColor(animate_img, cv2.COLOR_RGB2BGR))
+# plt.imshow(animate_img)
+# cv2.imwrite('Animated_'+img_name+'.jpg',cv2.cvtColor(animate_img, cv2.COLOR_RGB2BGR))
+
+from data_annotation import save_annotation
+save_annotation(contours,'g',sliced_doc,img_path,img_name)
 
 samples = []
 colors = []
