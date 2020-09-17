@@ -39,14 +39,14 @@
    <widget class="QPushButton" name="startImage">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>10</y>
-      <width>821</width>
+      <width>531</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Load Batch                                                                                                                                                     ...</string>
+     <string>Load Batch</string>
     </property>
    </widget>
    <widget class="QWidget" name="ImgWidget" native="true">
@@ -97,22 +97,6 @@
       <string>Saturation (Min)</string>
      </property>
     </widget>
-   </widget>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>-20</y>
-      <width>141</width>
-      <height>131</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../../../../../home/tamil/Downloads/0.png</pixmap>
-    </property>
    </widget>
    <widget class="QSpinBox" name="spinBox_3">
     <property name="geometry">
@@ -595,11 +579,84 @@ color: rgb(255, 255, 255);</string>
    <widget class="QComboBox" name="labels_box">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>580</y>
+      <x>610</x>
+      <y>10</y>
       <width>191</width>
       <height>26</height>
      </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="Button">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>164</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>164</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="Button">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>164</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>164</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="Button">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>164</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>239</red>
+          <green>235</green>
+          <blue>231</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="statusTip">
+     <string/>
+    </property>
+    <property name="editable">
+     <bool>false</bool>
+    </property>
+    <property name="currentText">
+     <string/>
     </property>
     <property name="currentIndex">
      <number>-1</number>

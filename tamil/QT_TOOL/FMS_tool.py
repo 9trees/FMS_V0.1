@@ -119,11 +119,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.list_paths(file_name)
         # folder_name = Path(file_name).name
         # parent_name = str(Path(file_name).parent)
-        if not os.path.exists(file_name + '/' + 'Animated_Images'):
-            os.mkdir(file_name + '/' + 'Animated_Images')
-
-        if not os.path.exists(file_name + '/' + 'CSV'):
-            os.mkdir(file_name + '/' + 'CSV')
+        if not os.path.exists(file_name + '/' + 'output'):
+            os.mkdir(file_name + '/' + 'output')
 
         if not os.path.exists(file_name + '/' + 'annotation'):
             os.mkdir(file_name + '/' + 'annotation')
@@ -259,11 +256,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         source_list = [samples, colors, lengths, widths]
 
         df = pd.DataFrame([source_list])
-        df.to_csv(file_name + '/' + 'CSV' + '/' + img_name + '.csv', index=False, header=False)
+        df.to_csv(file_name + '/' + 'output' + '/' + img_name + '.csv', index=False, header=False)
 
         self.imgs_list_3.addItem(img_name_ext + ':Animated successfully')
 
-        cv2.imwrite(file_name + '/' + 'Animated_Images' + '/' + img_name + '.jpg',
+        cv2.imwrite(file_name + '/' + 'output' + '/' + img_name + '.jpg',
                     cv2.cvtColor(animate_img, cv2.COLOR_RGB2BGR))
 
     def save_json(self):
