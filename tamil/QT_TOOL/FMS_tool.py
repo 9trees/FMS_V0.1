@@ -78,6 +78,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.startImage.clicked.connect(self.change_image)
+        self.startImage.setEnabled(False)
         self.imgs_list.itemClicked.connect(self.list_clicked)
         self.HSV.stateChanged.connect(self.update_setting)
         self.H1.valueChanged.connect(self.update_setting)
@@ -100,37 +101,46 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.process_roi.clicked.connect(self.find_len)
         self.clr_consle.clicked.connect(self.console_clear)
         self.save_annotation_bt.clicked.connect(self.save_json)
+        self.labels_box.view().pressed.connect(self.disable_load_batch)
 
         # initiating the labels from the .txt file
         with open('lables.txt', encoding='utf-8') as f:
             labels = f.read()
         labels = labels.split('\n')[:-1]
+
+        self.labels_box.addItem('Select Vegi Class')
         for i in labels:
             self.labels_box.addItem(i)
 
+    def disable_load_batch(self):
+        # if not self.labels_box.currentText() == 'Select Vegi Class':
+        self.startImage.setEnabled(True)
 
     def close_window(self):
         self.close()
 
     def change_image(self):
         global file_name
-        file_name = easygui.diropenbox()
-        self.startImage.setText(file_name)
-        self.list_paths(file_name)
-        # folder_name = Path(file_name).name
-        # parent_name = str(Path(file_name).parent)
-        if not os.path.exists(file_name + '/' + 'output'):
-            os.mkdir(file_name + '/' + 'output')
+        if not self.labels_box.currentText() == 'Select Vegi Class':
 
-        if not os.path.exists(file_name + '/' + 'annotation'):
-            os.mkdir(file_name + '/' + 'annotation')
+            file_name = easygui.diropenbox()
+            if file_name is not None:
+                self.startImage.setText(file_name)
+                self.list_paths(file_name)
+                # folder_name = Path(file_name).name
+                # parent_name = str(Path(file_name).parent)
+                if not os.path.exists(file_name + '/' + 'output'):
+                    os.mkdir(file_name + '/' + 'output')
+
+                if not os.path.exists(file_name + '/' + 'annotation'):
+                    os.mkdir(file_name + '/' + 'annotation')
 
     def update_setting(self):
         global running
         running = True
 
     def update_frame(self):
-        global running, dft, animate,rois
+        global running, dft, animate, rois
         if running:
             if rois:
                 img = box_draw
@@ -173,6 +183,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         running = False
 
     def list_paths(self, file_name):
+
         image_paths = glob.glob(file_name + '/*.JPG') + glob.glob(file_name + '/*.png') + glob.glob(
             file_name + '/*.jpg') + glob.glob(file_name + '/*.jpeg')
         for i in image_paths:
@@ -184,7 +195,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.imgs_list_3.clear()
 
     def list_clicked(self, item):
-        global image_f, running, cm_to_pixel, current_img, animate_img, animate, img_name, img_name_ext, current_index,rois
+        global image_f, running, cm_to_pixel, current_img, animate_img, animate, img_name, img_name_ext, current_index, rois
         animate = False
         rois = False
         current_img = item.text()
@@ -200,9 +211,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.imgs_list_3.addItem(img_name_ext + ':Read successfully')
         running = True
 
-
     def draw_roi(self):
-        global list_off_cords, box_draw, running, green,rois
+        global list_off_cords, box_draw, running, green, rois
         hsv = cv2.cvtColor(image_f, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(hsv, (self.H1.value(), self.S1.value(), self.V1.value()),
                            (self.H2.value(), self.S2.value(), self.V2.value()))
@@ -275,9 +285,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.imgs_list.takeItem(current_index)
 
 
-
 app = QtWidgets.QApplication(sys.argv)
 w = MyWindowClass(None)
-w.setWindowTitle('HSV Slicing Tool')
+w.setWindowTitle('FMS Tool')
 w.show()
 app.exec_()
