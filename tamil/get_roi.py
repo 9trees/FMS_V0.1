@@ -3,6 +3,11 @@ from matplotlib import pyplot as plt
 
 
 def get_roi(img):
+    cv2.namedWindow('Select ROIs', 2)
+    # cv2.namedWindow('Select ROIs', cv2.WINDOW_NORMAL)
+    # cv2.setWindowProperty('Select ROIs', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    # cv2.setWindowProperty('Select ROIs', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
+
     fromCenter = False
     ROIs = cv2.selectROIs('Select ROIs', img, fromCenter)
     list_of_rois = []

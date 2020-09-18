@@ -3,13 +3,19 @@ from matplotlib import pyplot as plt
 
 
 def get_roi(img):
+    # cv2.namedWindow('Select ROIs', cv2.WINDOW_KEEPRATIO)
+    # cv2.namedWindow('Select ROIs', cv2.WINDOW_NORMAL)
+    # cv2.setWindowProperty('Select ROIs', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    # cv2.setWindowProperty('Select ROIs', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
+    # cv2.moveWindow('Select ROIs', 200, 200)
+
     fromCenter = False
     ROIs = cv2.selectROIs('Select ROIs', img, fromCenter)
     list_of_rois = []
     while True:
 
         list_of_rois.append(ROIs)
-        if cv2.waitKey(0) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             break
 

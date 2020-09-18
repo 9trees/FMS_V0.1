@@ -10,7 +10,7 @@ from collections import Counter
 import cv2  # for resizing image
 
 
-def get_dominant_color(image, k=4, image_processing_size=None):
+def get_dominant_color(image, k=4, image_processing_size=None, black=False):
     """
     takes an image as input
     returns the dominant color of the image as a list
@@ -41,10 +41,12 @@ def get_dominant_color(image, k=4, image_processing_size=None):
     label_counts = Counter(labels)
 
     # subset out most popular centroid
-    dominant_color = clt.cluster_centers_[label_counts.most_common(2)[1][0]]
+    if not black:
+        dominant_color = clt.cluster_centers_[label_counts.most_common(2)[1][0]]
+    else:
+        dominant_color = clt.cluster_centers_[label_counts.most_common(2)[0][0]]
 
     return list(dominant_color)
-
 
 
 def closest_colour(requested_colour):
@@ -57,6 +59,7 @@ def closest_colour(requested_colour):
         min_colours[(rd + gd + bd)] = name
     return min_colours[min(min_colours.keys())]
 
+
 def get_colour_name(requested_colour):
     try:
         closest_name = actual_name = webcolors.rgb_to_name(requested_colour)
@@ -65,10 +68,19 @@ def get_colour_name(requested_colour):
         actual_name = None
     return actual_name, closest_name
 
+
 def find_color(img):
-    out = get_dominant_color(img,image_processing_size=(100,100))
+    out = get_dominant_color(img, image_processing_size=(100, 100))
     actual_name, closest_name = get_colour_name(tuple(out))
     if actual_name:
-        return actual_name
+        final_name = actual_name
     else:
-        return closest_name
+        final_name = closest_name
+    if final_name == 'black':
+        out = get_dominant_color(img, image_processing_size=(100, 100), black=True)
+        actual_name, closest_name = get_colour_name(tuple(out))
+        if actual_name:
+            final_name = actual_name
+        else:
+            final_name = closest_name
+    return final_name
