@@ -1,10 +1,7 @@
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-from shapely.geometry import LineString
+from shapely.geometry import LineString,Polygon
 import math
-from shapely.geometry import Polygon
-from skimage.io import imread
 
 
 def get_length(img, cm_to_pixel):
@@ -158,7 +155,6 @@ def animate(img, crop_img, length, width, color, sample, coord):
     minx, miny = centre_point[0], centre_point[1]
     maxx, maxy = centre_point[0] + w, centre_point[1] + h
 
-    # img = imread(img_path)
     cv2.rectangle(img, (int(minx), int(miny)), (int(maxx), int(maxy)), box_color, cv2.FILLED)
 
     cv2.putText(img, str(sample), (centre_point[0], centre_point[1] + text_height),

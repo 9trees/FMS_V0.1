@@ -1,13 +1,10 @@
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-from shapely.geometry import LineString
 import math
-from shapely.geometry import Polygon
 import webcolors
 from sklearn.cluster import KMeans
 from collections import Counter
-import cv2  # for resizing image
+
 
 
 def get_dominant_color(image, k=4, image_processing_size=None, black=False):

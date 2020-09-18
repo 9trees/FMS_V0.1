@@ -1,7 +1,5 @@
 import cv2
 import utlis
-from matplotlib import pyplot as plt
-
 
 
 def get_a4(img):

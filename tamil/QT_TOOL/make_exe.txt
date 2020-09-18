@@ -1,0 +1,3 @@
+pyinstaller --onefile -w 'FMS_tool.py'
+
+./FMS_tool
