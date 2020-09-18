@@ -280,6 +280,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         data_annotation.save_annotation(contours, self.labels_box.currentText(), image_f, img_path, img_name,
                                         file_name + '/' + 'annotation' + '/' + img_name + '.json')
 
+        os.remove(img_path)
         self.imgs_list_3.addItem(img_name_ext + ':Annotation Saved')
         self.imgs_list_2.addItem(current_img)
         self.imgs_list.takeItem(current_index)
