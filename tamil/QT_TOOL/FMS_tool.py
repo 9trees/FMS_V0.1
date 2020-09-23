@@ -7,7 +7,6 @@ import time
 from multiprocessing import Queue
 import easygui
 import os
-from matplotlib import pyplot as plt
 import glob
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
